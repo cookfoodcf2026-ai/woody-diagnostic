@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>3 分鐘職場卡位診斷表｜Woody 職涯教練</title>
+<meta name="description" content="10 條問題，自己答。5 分鐘內知道你係卡喺可見度、籌碼，定係根本冇卡位。">
+<style>
+  :root{--cream:#F2EADD;--brown:#2A1D16;--deep:#2B1D17;--gold:#C9A063;--gold2:#B08D57;--muted:#6B5642}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--cream);color:var(--brown);
+       font-family:"Noto Sans HK","PingFang HK",-apple-system,sans-serif;
+       line-height:1.7;padding:0 22px 48px}
+  .wrap{max-width:560px;margin:0 auto}
+  .kick{margin:38px 0 10px;font-size:12px;letter-spacing:5px;color:var(--gold2)}
+  h1{font-family:"Songti TC","Noto Serif HK",serif;font-weight:400;font-size:32px;line-height:1.35;margin:0 0 14px}
+  .sub{font-size:15px;color:var(--muted);margin:0 0 8px}
+  .rule{width:56px;height:2px;background:var(--gold2);margin:26px 0 34px}
+  .q{margin:0 0 30px}
+  .qn{font-size:11px;letter-spacing:3px;color:var(--gold2);margin-bottom:6px}
+  .qt{font-size:17px;font-weight:700;margin:0 0 12px;line-height:1.6}
+  .opts{display:flex;flex-wrap:wrap;gap:10px}
+  .opt{border:1.5px solid rgba(43,29,23,.22);background:transparent;color:var(--brown);
+       padding:11px 18px;border-radius:999px;font-size:15px;cursor:pointer;
+       font-family:inherit;transition:.15s}
+  .opt:active{transform:scale(.97)}
+  .opt.sel{background:var(--gold);border-color:var(--gold);color:#1C120D;font-weight:700}
+  .btn{width:100%;padding:18px;border:0;border-radius:12px;background:var(--deep);color:var(--cream);
+       font-size:17px;font-family:inherit;font-weight:700;margin-top:10px;cursor:pointer}
+  .btn[disabled]{opacity:.45}
+  .res{display:none;margin-top:34px;padding:26px 24px;background:var(--deep);color:var(--cream);border-radius:14px}
+  .res h2{font-family:"Songti TC",serif;font-weight:400;font-size:26px;margin:0 0 6px;color:var(--gold)}
+  .res .score{font-size:13px;letter-spacing:2px;color:#B9A78E;margin-bottom:16px}
+  .res p{font-size:16px;margin:0 0 14px;color:#EADFCC}
+  .res b{color:#fff}
+  .wa{display:block;text-align:center;text-decoration:none;margin-top:20px;padding:16px;
+      background:var(--gold);color:#1C120D;border-radius:12px;font-weight:700;font-size:16px}
+  .foot{margin-top:44px;font-size:12px;color:#8A7458;letter-spacing:1px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="kick">WOODY ｜ 職涯教練</div>
+  <h1>3 分鐘職場卡位診斷表</h1>
+  <p class="sub">唔使問任何人，自己答。答「唔知」就等於「冇」。</p>
+  <p class="sub">10 條問題，做完即刻知你卡喺邊。</p>
+  <div class="rule"></div>
+  <div id="form"></div>
+  <button class="btn" id="submit" disabled>睇我結果</button>
+  <div class="res" id="res"></div>
+  <div class="foot">@woody_careercoach</div>
+</div>
+<script>
+const QS = [
+ {t:'你老細講得出，你今年幫公司解決咗邊三件事？', o:['答到','答唔到'], p:0},
+ {t:'你知唔知，你老細今年要交咩數？', o:['知','唔知'], p:0},
+ {t:'過去 6 個月，你有冇做過至少一件，直接幫佢交到數嘅事？', o:['有','冇'], p:0},
+ {t:'你嘅成果，有冇書面紀錄？（report／email／appraisal）', o:['有','冇'], p:0},
+ {t:'你有冇固定渠道同老細講進度？', o:['有，每月','有，每季','冇'], p:0},
+ {t:'有冇一個人（唔係你自己）會喺會議上提你個名？', o:['有','冇'], p:0},
+ {t:'你知唔知下一個職級要求咩？講得出三項？', o:['講得出','講唔出'], p:0},
+ {t:'你嘅工作，換一個人做，要幾耐上手？', o:['一個月內','三個月','半年以上'], p:2},
+ {t:'過去一年，你有冇主動要求過升職、加薪或者調位？', o:['有','冇'], p:0},
+ {t:'如果你明日離職，公司要幾耐搵到人頂你？', o:['一星期','一個月','好難代替'], p:2}
+];
+const answers = new Array(QS.length).fill(null);
+const form = document.getElementById('form');
+QS.forEach((q,i)=>{
+  const d = document.createElement('div'); d.className='q';
+  d.innerHTML = `<div class="qn">${String(i+1).padStart(2,'0')}</div><div class="qt">${q.t}</div>`;
+  const box = document.createElement('div'); box.className='opts';
+  q.o.forEach((o,j)=>{
+    const b = document.createElement('button');
+    b.className='opt'; b.type='button'; b.textContent=o;
+    b.onclick = ()=>{
+      answers[i]=j;
+      [...box.children].forEach(c=>c.classList.remove('sel'));
+      b.classList.add('sel');
+      document.getElementById('submit').disabled = answers.includes(null);
+    };
+    box.appendChild(b);
+  });
+  d.appendChild(box); form.appendChild(d);
+});
+document.getElementById('submit').onclick = ()=>{
+  let score=0;
+  answers.forEach((a,i)=>{ if(a===QS[i].p) score++; });
+  const tiers = [
+    {max:3, head:'你冇卡位，你係被安排。', body:'你嘅努力冇紀錄、冇渠道、冇人代你講。<br>優先做：建立每月一次嘅進度匯報 —— 唔係為咗表現，係為咗留底。'},
+    {max:7, head:'你卡喺「可見度」。', body:'你做得好，但決策者唔知。<br>優先做：一個月內，令老細講得出你做過嘅三件事。'},
+    {max:10, head:'你唔缺卡位，你缺籌碼。', body:'你已經被看見，問題係你冇講價。<br>優先做：整理你嘅不可替代性，揀一次正式對話。'}
+  ];
+  const t = tiers.find(x=>score<=x.max);
+  const r = document.getElementById('res');
+  r.style.display='block';
+  r.innerHTML = `<h2>${t.head}</h2><div class="score">得分 ${score} / 10</div><p>${t.body}</p>
+    <p><b>想我睇你個 case？</b><br>WhatsApp 我，講三樣：行業、做咗幾年、你想去邊。</p>
+    <a class="wa" href="https://wa.me/85254063574?text=${encodeURIComponent('我做完診斷表，得分 '+score+'/10。想你睇我個 case。行業：　做咗幾年：　想去邊：')}">WhatsApp Woody</a>`;
+  r.scrollIntoView({behavior:'smooth', block:'start'});
+};
+</script>
+</body>
+</html>
